@@ -16,6 +16,7 @@ $(function () {
             multipleLinksOnOutput: false,
             multipleLinksOnInput: false,
             linkVerticalDecal: 0,
+            linkCurveYMargin: 100,
             onOperatorSelect: function (operatorId) {
                 return true;
             },
@@ -437,21 +438,22 @@ $(function () {
 
         },
         getCurveYPoints: function (fromX, toX, fromY, toY) {
-                var curveY = { curveStartPointY: fromY, curveEndPointY: toY }
-                var destLeft = toX < fromX;
-                var destUp = toY < fromY;
-                var destDown = toY > fromY;
-                if (destLeft) {
-                    if (destUp) {
-                        curveY.curveStartPointY -= 100;
-                        curveY.curveEndPointY += 100;
-                    } else if (destDown) {
-                        curveY.curveStartPointY += 100;
-                        curveY.curveEndPointY -= 100;
-                    }
+            var linkCurveYMargin=this.options.linkCurveYMargin;
+            var curveY = { curveStartPointY: fromY, curveEndPointY: toY }
+            var destLeft = toX < fromX;
+            var destUp = toY < fromY;
+            var destDown = toY > fromY;
+            if (destLeft) {
+                if (destUp) {
+                    curveY.curveStartPointY -= linkCurveYMargin;
+                    curveY.curveEndPointY += linkCurveYMargin;
+                } else if (destDown) {
+                    curveY.curveStartPointY += linkCurveYMargin;
+                    curveY.curveEndPointY -= linkCurveYMargin;
                 }
-                return curveY;
-            },
+            }
+            return curveY;
+        },
         getOperatorCompleteData: function (operatorData) {
             if (typeof operatorData.internal == 'undefined') {
                 operatorData.internal = {};
