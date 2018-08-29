@@ -426,16 +426,32 @@ $(function () {
             var bezierToX = toX + 1;
             var bezierIntensity = Math.min(100, Math.max(Math.abs(bezierFromX - bezierToX) / 2, Math.abs(fromY - toY)));
 
-
-            linkData.internal.els.path.setAttribute("d", 'M' + bezierFromX + ',' + (fromY) + ' C' + (fromX + offsetFromX + distanceFromArrow + bezierIntensity) + ',' + fromY + ' ' + (toX - bezierIntensity) + ',' + toY + ' ' + bezierToX + ',' + toY);
-
+            var curveY = this.getCurveYPoints(fromX, toX, fromY, toY);
+           //linkData.internal.els.path.setAttribute("d", 'M' + bezierFromX + ',' + (fromY) + ' C' + (fromX + offsetFromX + distanceFromArrow + bezierIntensity) + ',' + fromY + ' ' + (toX - bezierIntensity) + ',' + toY + ' ' + bezierToX + ',' + toY);
+             linkData.internal.els.path.setAttribute("d", 'M' + bezierFromX + ',' + (fromY) + ' C' + (fromX + offsetFromX + distanceFromArrow + bezierIntensity) + ',' + curveY.curveStartPointY + ' ' + (toX - bezierIntensity) + ',' + curveY.curveEndPointY + ' ' + bezierToX + ',' + toY);
+            
             linkData.internal.els.rect.setAttribute("x", fromX);
             linkData.internal.els.rect.setAttribute("y", fromY - this.options.linkWidth / 2);
             linkData.internal.els.rect.setAttribute("width", offsetFromX + distanceFromArrow + 1);
             linkData.internal.els.rect.setAttribute("height", this.options.linkWidth);
 
         },
-
+        getCurveYPoints: function (fromX, toX, fromY, toY) {
+                var curveY = { curveStartPointY: fromY, curveEndPointY: toY }
+                var destLeft = toX < fromX;
+                var destUp = toY < fromY;
+                var destDown = toY > fromY;
+                if (destLeft) {
+                    if (destUp) {
+                        curveY.curveStartPointY -= 100;
+                        curveY.curveEndPointY += 100;
+                    } else if (destDown) {
+                        curveY.curveStartPointY += 100;
+                        curveY.curveEndPointY -= 100;
+                    }
+                }
+                return curveY;
+            },
         getOperatorCompleteData: function (operatorData) {
             if (typeof operatorData.internal == 'undefined') {
                 operatorData.internal = {};
